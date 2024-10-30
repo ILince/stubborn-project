@@ -1,0 +1,71 @@
+{# sweat_shirt/sweatshirt_list.html.twig #}
+
+{% if sweatshirts is empty %}
+    <p>Aucun sweat-shirt disponible.</p>
+{% else %}
+    {% for sweatshirt in sweatshirts %}
+        <div class="border border-dark p-2 m-4">
+            <div class="row p-2 m-2">
+                <div class="col-12 col-md-2 d-flex justify-content-center align-items-center">
+                    <div class="thumbnail-container">
+                        {# Affichage de l'image du sweatshirt #}
+                        {% if sweatshirt.thumbnail %}
+                            <img src="{{ asset('sweat_shirt/images/' ~ sweatshirt.thumbnail) }}" alt="Image du sweatshirt" class="img-fluid">
+                        {% else %}
+                            <p>Aucune image disponible</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-10">
+                    <div class="row align-items-end d-flex justify-content-end">
+                        <div class="col-12 col-md-4 mb-3" style="width:150px">
+                            <label>Nom</label>
+                            <div class="border border-dark rounded">
+                                <p>{{ sweatshirt.name }}</p>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 mb-3" style="width:150px">
+                            <label>Prix</label>
+                            <div class="border border-dark rounded">
+                                <p>{{ sweatshirt.price }}€</p>
+                            </div>
+                        </div>
+
+                        {# Affichage des stocks pour chaque taille #}
+                        {% set sizes = ['XS', 'S', 'M', 'L', 'XL'] %}
+                        {% for size in sizes %}
+                            <div class="col-12 col-md-4 mb-3 text-center" style="width:150px">
+                                <label>Stock {{ size }}</label>
+                                {% set stock = sweatshirt.stocks|filter(st => st.size == size)|first %}
+                                {% if stock is not null %}
+                                    <div class="border border-dark rounded">
+                                        <p>{{ stock.quantity }}</p>
+                                    </div>
+                                {% else %}
+                                    <p>Aucun stock disponible pour cette taille.</p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="row justify-content-end pt-4">
+                        <div class="col-4 d-grid gap-2 pt-4">
+                            {# Bouton pour modifier le sweatshirt #}
+                            <a href="{{ path('sweatshirt_edit', { 'id': sweatshirt.id }) }}" class="btn btn-light btn-outline-dark btn-lg px-4 rounded">
+                                Modifier
+                            </a>
+                        </div>
+
+                        {# Formulaire pour supprimer le sweatshirt avec protection CSRF #}
+                        <form class="col-4 d-grid gap-2 pt-4" method="post" action="{{ path('sweatshirt_delete', {'id': sweatshirt.id}) }}" onsubmit="return confirm('Êtes-vous sûr ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ sweatshirt.id) }}">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-light btn-outline-danger btn-lg px-4 rounded">Supprimer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}

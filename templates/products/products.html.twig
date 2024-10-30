@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Produits
+{% endblock %}
+
+{% block body %}
+
+
+	<div class="container my-5">
+		<div
+			class="row">
+			<!-- Sélecteur de Fourchette de Prix -->
+			<div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+				<form method="get" action="{{ path('app_products') }}" id="price-filter-form">
+					<select name="price-range" id="price-select" class="form-select" onchange="document.getElementById('price-filter-form').submit();">
+						<option value="">Fourchette de prix</option>
+						<option value="10-29" {% if '10-29' in priceRange %} selected {% endif %}>10 à 29 €</option>
+						<option value="30-35" {% if '30-35' in priceRange %} selected {% endif %}>30 à 35 €</option>
+						<option value="35-50" {% if '35-50' in priceRange %} selected {% endif %}>35 à 50 €</option>
+					</select>
+				</form>
+			</div>
+
+			<!-- Liste des Sweatshirts -->
+			{% for sweatshirt in sweatshirts %}
+				<div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+					<div class="card h-100">
+						{% if sweatshirt.thumbnail %}
+							<img src="{{ asset('sweat_shirt/images/' ~ sweatshirt.thumbnail) }}" class="card-img-top img-fluid" alt="{{ sweatshirt.name }}">
+						{% else %}
+							<img src="{{ asset('images/default.png') }}" class="card-img-top img-fluid" alt="Image par défaut">
+						{% endif %}
+						<div class="card-body d-flex flex-column">
+							<h5 class="card-title">{{ sweatshirt.name }}</h5>
+							<p class="card-text">Prix :
+								{{ sweatshirt.price }}€</p>
+							<a href="{{ path('app_product_id', {id: sweatshirt.id}) }}" class="btn btn-light btn-outline-dark btn-lg px-4 rounded">Voir</a>
+						</div>
+					</div>
+				</div>
+			{% else %}
+				<div class="col-12">
+					<p class="text-center">Aucun sweatshirt disponible pour le moment.</p>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock %}

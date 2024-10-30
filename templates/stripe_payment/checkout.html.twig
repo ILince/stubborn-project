@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Finaliser la Commande{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Finalisez votre commande</h1>
+        <button id="checkout-button" class="btn btn-danger btn-lg rounded">Finaliser ma commande</button>
+        <div id="loading" style="display: none;">Processing...</div> {# Indicateur de chargement #}
+    </div>
+
+    <script src="https://js.stripe.com/v3/"></script> {# Inclusion de la bibliothèque Stripe #}
+    <script>
+        (function() {
+            document.addEventListener('DOMContentLoaded', function () {
+                // Initialisation de Stripe avec la clé publique
+                var stripe = Stripe('{{ stripe_public_key }}');
+
+                // Vérification de l'existence du bouton de paiement
+                var checkoutButton = document.getElementById('checkout-button');
+                if (!checkoutButton) {
+                    console.error('Checkout button not found!'); {# Affichage d'un message d'erreur dans la console #}
+                    return; // Sortir si le bouton n'existe pas
+                }
+
+                // Ajout d'un écouteur d'événement au clic sur le bouton de paiement
+                checkoutButton.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    // Afficher l'indicateur de chargement (facultatif)
+                    document.getElementById('loading').style.display = 'block';
+
+                    // Désactiver le bouton pour éviter des clics multiples
+                    checkoutButton.disabled = true;
+
+                    // Récupération de la session de paiement depuis le serveur
+                    fetch('{{ path('create_checkout_session') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            items: {{ data|json_encode|raw }} // Articles du panier
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(session => {
+                        // Redirection vers Stripe Checkout
+                        return stripe.redirectToCheckout({ sessionId: session.id });
+                    })
+                    .then(result => {
+                        if (result.error) {
+                            // Afficher un message d'erreur en cas de problème pendant la redirection
+                            alert(result.error.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error); {# Affichage d'une erreur dans la console #}
+                    })
+                    .finally(() => {
+                        // Masquer l'indicateur de chargement et réactiver le bouton
+                        document.getElementById('loading').style.display = 'none';
+                        checkoutButton.disabled = false;
+                    });
+                });
+            });
+        })();
+    </script>
+
+{% endblock %}

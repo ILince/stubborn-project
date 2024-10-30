@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Welcome to Home!
+{% endblock %}
+
+{% block body %}
+
+	<section id="home" class="py-5">
+		<div class="container-fluid" style="max-width: 1400px;">
+			<div class="row d-flex justify-content-center">
+				{% for sweatshirt in sweatshirts %}
+					<div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex justify-content-center">
+						<div class="card shadow-sm border border-dark p-3" style="width: 100%">
+							<div class="image" style="border: 1px solid #dee2e6;">
+								<img
+								src="{{ sweatshirt.thumbnail ? '/sweat_shirt/images/' ~ sweatshirt.thumbnail : '/images/default.png' }}" alt="{{ sweatshirt.thumbnail ? sweatshirt.name : 'Default Image' }}" class="card-img-top" style="height: 300px; object-fit: cover;">
+							{# Affiche l'image du sweatshirt ou une image par défaut #}
+							</div>
+							<div class="card-body row">
+								<div class="col">
+									<p class="card-title">
+										<strong>{{ sweatshirt.name }}</strong>
+									</p>
+									{# Nom du sweatshirt #}
+									<p class="card-text">
+										<strong>Prix :</strong>
+										{{ sweatshirt.price }}€
+										{# Prix du sweatshirt #}
+									</p>
+								</div>
+								<div class="col">
+									{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+										{# Vérifie si l'utilisateur est connecté #}
+										<a href="{{ path('app_product_id', { id: sweatshirt.id }) }}" class="btn btn-light btn-outline-dark btn-lg px-4 rounded">Voir</a>
+										{# Lien pour voir les détails du sweatshirt #}
+									{% endif %}
+								</div>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</section>
+{% endblock %}

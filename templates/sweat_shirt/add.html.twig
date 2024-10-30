@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un Sweat-shirt
+{% endblock %}
+
+{% block body %}
+	<style>
+		.thumbnail-container {
+			max-width: 200px;
+			max-height: 200px;
+			overflow: hidden;
+			border: 1px solid #dee2e6;
+			border-radius: 0.25rem;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.thumbnail-container img {
+			width: 200px;
+			height: 200px;
+			object-fit: cover;
+		}
+	</style>
+
+	<div
+		class="m-4 p-4 fw-semibold">
+		{# Affichage des messages flash pour les erreurs ou succès #}
+		{% for type, messages in app.flashes %}
+			<div class="alert alert-{{ type }}">
+				{{ messages | join('. ') }}
+			</div>
+		{% endfor %}
+
+		{# Add formulaire #}
+		{{ form_start(form, {'attr': {'class': 'form', 'data-turbo': 'false'}}) }}
+
+		<div class="border border-dark p-2 m-4" style="background-color: #f8cecc;">
+			<div class="row p-2 m-2">
+				<div class="col-12 col-md-2 d-flex justify-content-center align-items-center">
+					<div class="thumbnail-container">
+						<img src="{{ asset('images/Hoodie.png') }}" alt="Image du sweatshirt" class="img-fluid">
+					</div>
+				</div>
+
+				<div class="col-12 col-md-10">
+					<div class="row align-items-end d-flex justify-content-end">
+						<div class="col-12 col-md-4 mb-3" style="width:150px">
+							<label>Nom</label>
+							{{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+							{{ form_errors(form.name) }}
+						</div>
+						<div class="col-12 col-md-4 mb-3" style="width:150px">
+							<label>Prix</label>
+							{{ form_widget(form.price, {'attr': {'class': 'form-control'}}) }}
+							{{ form_errors(form.price) }}
+						</div>
+
+						{# Gestion du stock pour chaque taille #}
+						{% set sizes = ['XS', 'S', 'M', 'L', 'XL'] %}
+						{% for size in sizes %}
+							<div class="col-12 col-md-4 mb-3 text-center" style="width:150px">
+								<label>Stock
+									{{ size }}</label>
+								{% set stock_form = form.stocks|filter(st => st.vars.value.size == size)|first %}
+								{% if stock_form is not null %}
+									{{ form_widget(stock_form.quantity, {'attr': {'class': 'form-control'}}) }}
+									{{ form_errors(stock_form.quantity) }}
+								{% else %}
+									<p>Aucun stock disponible pour cette taille.</p>
+								{% endif %}
+							</div>
+						{% endfor %}
+					</div>
+
+					<div class="row mb-3 justify-content-end">
+						<div class="col align-items-end d-flex justify-content-end">
+							<div>
+								<label>Miniature</label>
+								<div class="border border-dark rounded text-center" style="max-width: 400px">
+									{{ form_widget(form.thumbnailFile, {'attr': {'class': 'form-control'}}) }}
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row justify-content-end pt-4">
+						<div class="col-4 d-grid gap-2 pt-4">
+							<button type="submit" class="btn btn-light btn-outline-dark btn-lg px-4 rounded">Ajouter</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		{{ form_end(form) }}
+
+		{# liste des sweatshirts après l'ajout #}
+		{% include 'sweat_shirt/list.html.twig' with {'sweatshirts': sweatshirts} %}
+	</div>
+{% endblock %}

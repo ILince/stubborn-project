@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}S'inscrire
+{% endblock %}
+
+{% block body %}
+	{# Affichage des messages d'erreur pour la vérification de l'email #}
+	{% for flash_error in app.flashes('verify_email_error') %}
+		<div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+	{% endfor %}
+
+	<style>
+		.line {
+			height: 2px;
+			background-color: #bcd8f3;
+			margin: 10px 0;
+		}
+	</style>
+
+	<div class="row">
+		<div class="col-6 my-4 mx-auto p-3 border border-dark" style="width: 350px">
+			<h1 class="h3 mb-3 fs-5 fw-normal">S'inscrire</h1>
+			<div class="line"></div>
+
+			{# Affichage des erreurs de formulaire #}
+			{{ form_errors(registrationForm) }}
+
+			{# formulaire d'inscription #}
+			{{ form_start(registrationForm) }}
+			<div class="mb-4 pb-4">
+
+				{{ form_row(registrationForm.username) }}
+				{{ form_row(registrationForm.email) }}
+				{{ form_row(registrationForm.deliveryAddress) }}
+			</div>
+			<div class="my-4">
+
+				{{ form_row(registrationForm.plainPassword.first) }}
+				{{ form_row(registrationForm.plainPassword.second) }}
+			</div>
+			<div class="my-4">
+
+				{{ form_row(registrationForm.agreeTerms) }}
+			</div>
+			{# Bouton pour soumettre le formulaire #}
+			<button type="submit" class="btn btn-lg btn-primary" style="background-color: #66bbff;">Créer un compte</button>
+			{{ form_end(registrationForm) }}
+
+			<div class="line"></div>
+			<p>Déjà inscrit ?</p>
+			<div
+				class="btn btn-lg btn-primary" style="background-color: #66bbff;">
+				{# Lien vers la page de connexion #}
+				<a href="{{ path('app_login') }}" class="text-white" style="text-decoration: none; display: block; width: 100%; height: 100%;">
+					Se connecter
+				</a>
+			</div>
+		</div>
+	</div>
+{% endblock %}

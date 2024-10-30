@@ -1,17 +1,81 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}Welcome!
+			{% endblock %}
+		</title>
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+		<!-- Définition de l'icône de l'onglet -->
+		<link
+		rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+
+		<!-- Importation du fichier CSS de Bootstrap pour le style et la mise en page -->
+		<link
+		href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+		<!-- Bloc pour inclure des fichiers CSS supplémentaires dans les sous-templates -->
+		{% block stylesheets %}{% endblock %}
+
+		<!-- Importation du script JavaScript de Bootstrap pour les fonctionnalités interactives -->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"></script>
+	</head>
+	<body>
+		<header>
+			<!-- Navigation principale de l'application -->
+			<nav class="navbar navbar-expand-lg navbar-light p-2 shadow-sm border-bottom border-dark">
+				<div
+					class="d-flex align-items-start container-fluid p-2">
+					<!-- Logo -->
+					<img class="logo" src="{{ asset('images/Logo.png') }}" alt="Logo" width="190">
+
+
+					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+
+					<!-- Menu de navigation -->
+					<div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup" style="max-width: 530px;">
+						<div class="navbar-nav">
+
+							<a class="nav-link {{ app.current_route == 'app_home' ? 'active' : '' }}" href="{{ url('app_home') }}">Accueil</a>
+
+
+							{% if is_granted('ROLE_ADMIN') %}
+								<a class="nav-link {{ app.current_route == 'app_sweatshirt_add' ? 'active' : '' }}" href="{{ url('app_sweatshirt_add') }}">Back-Office</a>
+							{% endif %}
+
+
+							{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+								<a class="nav-link {{ app.current_route == 'app_products' ? 'active' : '' }}" href="{{ url('app_products') }}">Boutique</a>
+								<a class="nav-link {{ app.current_route == 'app_cart_index' ? 'active' : '' }}" href="{{ url('app_cart_index') }}">Panier</a>
+								<a class="nav-link {{ app.current_route == 'app_logout' ? 'active' : '' }}" href="{{ url('app_logout') }}">Se déconnecter</a>
+							{% else %}
+
+								<a class="nav-link {{ app.current_route == 'app_register' ? 'active' : '' }}" href="{{ url('app_register') }}">S'inscrire</a>
+								<a class="nav-link {{ app.current_route == 'app_login' ? 'active' : '' }}" href="{{ url('app_login') }}">Se connecter</a>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</nav>
+		</header>
+
+		<div
+			class="container-fluid">
+			<!-- Bloc pour le contenu principal de la page -->
+			{% block body %}{% endblock %}
+		</div>
+
+		<footer>
+    <div class="px-4 py-2 m-4 border border-dark shadow-sm">
+        <p><strong>Nom de la société :</strong> Stubborn</p>
+        <p><strong>Adresse :</strong> Piccadilly Circus, London W1J 0DA, Royaume-Uni</p>
+        <p><strong>Adresse de contact :</strong> <a href="mailto:stubborn@blabla.com">stubborn@blabla.com</a></p>
+        <p><strong>Slogan :</strong> Don't compromise on your look</p>
+    </div>
+</footer>
+
+	</body>
 </html>
