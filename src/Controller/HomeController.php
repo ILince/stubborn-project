@@ -14,7 +14,7 @@ class HomeController extends AbstractController
     public function index(SweatshirtRepository $sweatshirtRepository): Response
     {
         // IDs des sweatshirts à afficher
-        $sweatshirtIds = [1, 4, 8];
+        $sweatshirtIds = [1, 4, 9];
 
         // Récupération des sweatshirts en fonction des IDs
         $sweatshirts = $sweatshirtRepository->findBy(['id' => $sweatshirtIds]);
