@@ -2,8 +2,9 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\SweatShirt;
+use App\DataFixtures\AppFixtures;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use App\DataFixtures\SweatshirtFixtures;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 
 class CartControllerTest extends WebTestCase
@@ -21,12 +22,12 @@ class CartControllerTest extends WebTestCase
         $purger = new ORMPurger($entityManager);
         $purger->purge();
 
-        // Charger les fixtures de Sweatshirt
-        $sweatshirtFixtures = new SweatshirtFixtures();
-        $sweatshirtFixtures->load($entityManager);
+        // Charger les fixtures de Sweatshirt et autres entités
+        $appFixtures = new AppFixtures($this->client->getContainer()->get('security.password_hasher'));
+        $appFixtures->load($entityManager);
 
         // Récupérer les IDs dynamiquement
-        $this->sweatshirtIds = $sweatshirtFixtures->getSweatshirtIds(); 
+        $this->sweatshirtIds = $this->getSweatshirtIdsFromDatabase($entityManager);
     }
 
     public function testAddItemToCart(): void
@@ -40,7 +41,7 @@ class CartControllerTest extends WebTestCase
         $this->client->followRedirect();
 
         // Vérifier que le sweatshirt est maintenant dans le panier
-        $this->assertSelectorTextContains('.cart-item', 'SweatShirt 1');
+        $this->assertSelectorTextContains('.cart-item', 'Blackbelt'); 
         $this->assertSelectorTextContains('.cart-item', 'Taille : S'); 
     }
 
@@ -57,8 +58,7 @@ class CartControllerTest extends WebTestCase
         $this->assertJson($response->getContent());
 
         $data = json_decode($response->getContent(), true);
-        $this->assertArrayHasKey('id', $data); // Vérifier que l'ID de session est présent
-
+        $this->assertArrayHasKey('id', $data); 
     }
 
     public function testSuccessfulPaymentRedirect(): void
@@ -71,7 +71,6 @@ class CartControllerTest extends WebTestCase
         $data = json_decode($this->client->getResponse()->getContent(), true);
         $sessionId = $data['id'];
 
-
         // Accéder à la route de succès
         $this->client->request('GET', '/success');
 
@@ -83,5 +82,16 @@ class CartControllerTest extends WebTestCase
     private function addItemToCart(string $sweatshirtId, string $size): void
     {
         $this->client->request('POST', '/cart/add/' . $sweatshirtId . '/' . $size);
+    }
+
+    private function getSweatshirtIdsFromDatabase($entityManager): array
+    {
+        // Utiliser le repository de la classe SweatShirt pour récupérer les objets
+        $sweatshirts = $entityManager->getRepository(SweatShirt::class)->findAll();
+        $ids = [];
+        foreach ($sweatshirts as $sweatshirt) {
+            $ids[] = $sweatshirt->getId();
+        }
+        return $ids;
     }
 }

@@ -17,21 +17,25 @@ Pour installer l'application sur votre machine, suivez ces étapes :
 1.Clonez le dépôt :
 https://github.com/ILince/stubborn-project
 
-2.Installez les dépendances avec la commande :
+2.Installez les dépendances :
 composer install
 
 3.Configurez votre environnement : 
 modifier le fichier ".env" et configurez le avec les paramètres de votre base de données.
 
-4.Créez la base de données avec la commande :
+4.Créez la base de données :
 php bin/console doctrine:database:create
 
 5.Appliquez les migrations :
 php bin/console doctrine:migrations:migrate
 
+6.Chargez les fixtures : :
+php bin/console doctrine:fixtures:load
 
 
-4. CONFIGURATION 
+
+
+.  CONFIGURATION 
 
 Après l'installation, vous pouvez configurer l'application en modifiant le fichier .env pour définir vos variables d'environnement, notamment les clés API Stripe.
 
@@ -51,6 +55,9 @@ modifier le fichier ".env.test" et configurez le avec les paramètres de votre b
 
 2.Créez la base de données test avec la commande :
 php bin/console doctrine:database:create --env=test
+
+5.Appliquez les migrations dans la base de données test :
+php bin/console doctrine:migrations:migrate --env=test
 
 3.Exécuter les tests, utilliser la commande: 
 php bin/phpunit

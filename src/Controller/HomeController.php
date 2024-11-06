@@ -13,11 +13,11 @@ class HomeController extends AbstractController
     #[Route('/', name: 'app_home')]
     public function index(SweatshirtRepository $sweatshirtRepository): Response
     {
-        // IDs des sweatshirts à afficher
-        $sweatshirtIds = [1, 4, 9];
+        // Liste des noms de sweatshirts à afficher
+        $sweatshirtNames = ['Blackbelt', 'Street', 'BornInUsa'];
 
-        // Récupération des sweatshirts en fonction des IDs
-        $sweatshirts = $sweatshirtRepository->findBy(['id' => $sweatshirtIds]);
+        // Récupérer les sweatshirts en fonction des noms
+        $sweatshirts = $sweatshirtRepository->findBy(['name' => $sweatshirtNames]);
 
         return $this->render('home/home.html.twig', [
             'sweatshirts' => $sweatshirts,
